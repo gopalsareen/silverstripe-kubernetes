@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  labels:
+    app: silverstripe
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: silverstripe
+    tier: db
+  clusterIP: None
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: db
+  labels:
+    app: silverstripe
+spec:
+  selector:
+    matchLabels:
+      app: silverstripe
+      tier: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: silverstripe
+        tier: db
+    spec:
+      containers:
+        - name: db
+          image: mysql:5.6
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: DATABASE
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: PASSWORD
+          ports:
+            - containerPort: 3306
+              name: db
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: pvc-db
