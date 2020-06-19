@@ -120,7 +120,7 @@ Deployment will expose the application on one of the node ip: http://IP:32380
 
 
 
-###License
+### License
  
  - [LICENSE](LICENSE)
 
