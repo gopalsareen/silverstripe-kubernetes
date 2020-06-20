@@ -118,11 +118,10 @@ It builds the baked docker image from the latest version of
 Deployment will expose the application on one of the node ip: http://IP:32380
 
 
+### TODO
 
-
-### License
- 
- - [LICENSE](LICENSE)
+----
+ - Backup/Restore on deployment.
 
 
 ## WIN!
